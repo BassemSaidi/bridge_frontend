@@ -4,8 +4,8 @@
       <div class="flex items-center justify-between h-16">
         <!-- Logo Section -->
         <router-link to="/" class="flex items-center gap-2 lg:gap-3 group">
-            <div class="flex h-8 w-8 lg:h-11 lg:w-11 items-center justify-center rounded-xl lg:rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 shadow-lg shadow-slate-200/50 group-hover:shadow-indigo-200/50 transition-all duration-300">
-              <Package :size="24" class="text-white lg:text-base" />
+            <div class="flex h-8 w-8 lg:h-11 lg:w-11 items-center justify-center rounded-xl lg:rounded-2xl bg-blue-600 shadow-lg shadow-blue-200/50 group-hover:shadow-blue-300/50 transition-all duration-300">
+              <div class="text-white font-bold text-sm lg:text-base">BT</div>
             </div>
             <div class="hidden sm:block group h-10 overflow-hidden cursor-pointer bg-white ">
                 <div class="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-10">
