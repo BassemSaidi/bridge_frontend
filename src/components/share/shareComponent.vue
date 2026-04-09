@@ -150,7 +150,7 @@ export default {
 
     const profileUrl = computed(() => {
       if (!account.value) return ''
-      return `${window.location.origin}/profile/${account.value.id}`
+      return `${window.location.origin}/profil/${account.value.id}`
     })
 
     const loadAccount = async () => {

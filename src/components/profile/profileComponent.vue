@@ -186,7 +186,7 @@ export default {
     }
     
     const shareProfile = () => {
-      const profileUrl = `${window.location.origin}/profile/${profile.value.id}`
+      const profileUrl = `${window.location.origin}/profil/${profile.value.id}`
       
       if (navigator.share) {
         navigator.share({

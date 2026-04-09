@@ -108,7 +108,7 @@ const routes = [
     component: ViewComponent
   },
   {
-    path: '/profile/:id',
+    path: '/profil/:id',
     name: 'PublicProfile',
     component: PublicProfileComponent
   },

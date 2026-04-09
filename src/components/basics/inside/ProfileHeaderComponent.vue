@@ -310,7 +310,7 @@ const loadLanguagePreference = () => {
 // Share profile function
 const shareProfile = () => {
   // Get current profile URL
-  const profileUrl = window.location.origin + '/profile/' + currentUser.value?.id
+  const profileUrl = window.location.origin + '/profil/' + currentUser.value?.id
   
   // Check if Web Share API is available
   if (navigator.share) {
