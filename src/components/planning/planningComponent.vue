@@ -54,7 +54,6 @@ import PlanningActions from './components/PlanningActions.vue'
 import PlanningRouteProgress from './components/PlanningRouteProgress.vue'
 import PlanningManualModal from './components/PlanningManualModal.vue'
 import PlanningEmptyState from './components/PlanningEmptyState.vue'
-import FooterComponent from '../basics/FooterComponent.vue'
 
 export default {
   name: 'PlanningListComponent',
