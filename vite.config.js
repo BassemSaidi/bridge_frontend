@@ -8,15 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['vue'],
-          api: ['./src/api/axios.js']
-        }
-      }
-    }
+    sourcemap: true
   },
   server: {
     historyApiFallback: true
