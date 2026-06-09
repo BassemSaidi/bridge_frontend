@@ -19,6 +19,8 @@
                      :active-trip="activeTrip" 
                      :current-lang="currentLang" 
                      :t="t"
+                     :is-loading="isLoadingAction"
+                     :current-action="currentAction"
                      @start-trip="startTrip"
                      @auto-advance="autoAdvance"
                      @set-on-boat="setOnBoatStatus"
@@ -71,6 +73,8 @@ export default {
     const activeTrip = ref(null)
     const showManualModal = ref(false)
     const currentLang = ref('fr')
+    const isLoadingAction = ref(false)
+    const currentAction = ref('')
 
     // Load language preference from localStorage
     const loadLanguagePreference = () => {
@@ -189,6 +193,9 @@ export default {
 
     const startTrip = async () => {
       if (!activeTrip.value) return
+
+      isLoadingAction.value = true
+      currentAction.value = 'start'
       
       try {
         const response = await apiService.voyages.start(activeTrip.value.idV)
@@ -200,11 +207,17 @@ export default {
         }
       } catch (error) {
         console.error('Error starting trip:', error)
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const autoAdvance = async () => {
       if (!activeTrip.value) return
+
+      isLoadingAction.value = true
+      currentAction.value = 'advance'
       
       try {
         const response = await apiService.voyages.advance(activeTrip.value.idV)
@@ -218,11 +231,17 @@ export default {
         }
       } catch (error) {
         console.error('Error auto-advancing:', error)
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const setOnBoatStatus = async () => {
       if (!activeTrip.value) return
+
+      isLoadingAction.value = true
+      currentAction.value = 'boat'
       
       try {
         // Calculate the index for the boat position
@@ -240,11 +259,17 @@ export default {
         }
       } catch (error) {
         console.error('Error setting on boat status:', error)
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const finishTrip = async () => {
       if (!activeTrip.value) return
+
+      isLoadingAction.value = true
+      currentAction.value = 'finish'
       
       try {
         const villePD = activeTrip.value.villePD || []
@@ -264,11 +289,17 @@ export default {
         }
       } catch (error) {
         console.error('Error finishing trip:', error)
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const updateStatusManually = async (manualData) => {
       if (!activeTrip.value || !manualData.status) return
+
+      isLoadingAction.value = true
+      currentAction.value = 'manual'
       
       try {
         // Convert manual data to use status_message instead of message
@@ -286,6 +317,9 @@ export default {
         }
       } catch (error) {
         console.error('Error updating status:', error)
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
@@ -298,6 +332,8 @@ export default {
       activeTrip,
       showManualModal,
       currentLang,
+      isLoadingAction,
+      currentAction,
       t,
       handleLanguageChange,
       startTrip,

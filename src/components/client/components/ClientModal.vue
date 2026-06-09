@@ -189,8 +189,13 @@
           <button @click="$emit('download-pdf', selectedClient)" class="bg-blue-600 text-white py-6 rounded-[2rem] font-black flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
             <Download :size="20" /> {{ t('downloadPDF') }}
           </button>
-          <button v-if="selectedClient.status !== 'livré'" @click="$emit('mark-delivered', selectedClient)" class="bg-emerald-600 text-white py-6 rounded-[2rem] font-black flex items-center justify-center gap-3 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20">
-            <CheckCircle :size="20" /> {{ t('markDelivered') }}
+          <button v-if="selectedClient.status !== 'livré'" 
+                  @click="$emit('mark-delivered', selectedClient)" 
+                  :disabled="isLoading && currentAction === 'deliver'"
+                  class="bg-emerald-600 text-white py-6 rounded-[2rem] font-black flex items-center justify-center gap-3 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50 disabled:cursor-not-allowed">
+            <Loader2 v-if="isLoading && currentAction === 'deliver'" class="animate-spin" :size="20" />
+            <CheckCircle v-else :size="20" />
+            {{ isLoading && currentAction === 'deliver' ? 'Marking...' : t('markDelivered') }}
           </button>
           <div v-else class="bg-emerald-100 text-emerald-700 py-6 rounded-[2rem] font-black flex items-center justify-center gap-3">
             <CheckCircle :size="20" /> {{ t('alreadyDelivered') }}
@@ -202,11 +207,11 @@
 </template>
 
 <script>
-import { X, MapPin, Phone, CheckCircle, Download } from 'lucide-vue-next'
+import { X, MapPin, Phone, CheckCircle, Download, Loader2 } from 'lucide-vue-next'
 
 export default {
   name: 'ClientModal',
-  components: { X, MapPin, Phone, CheckCircle, Download },
+  components: { X, MapPin, Phone, CheckCircle, Download, Loader2 },
   props: {
     selectedClient: {
       type: Object,
@@ -223,6 +228,14 @@ export default {
     getCityColor: {
       type: Function,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
+    currentAction: {
+      type: String,
+      default: ''
     }
   },
   emits: ['close-modal', 'set-city-color', 'download-pdf', 'mark-delivered']

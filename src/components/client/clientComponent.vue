@@ -28,15 +28,19 @@
                 <div class="flex gap-2">
                   <button 
                     @click="acceptRequest(request)"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                    :disabled="isLoadingAction && currentAction === 'accept'"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    {{ t('pendingRequests.accept') }}
+                    <Loader2 v-if="isLoadingAction && currentAction === 'accept'" class="animate-spin" :size="16" />
+                    {{ isLoadingAction && currentAction === 'accept' ? 'Accepting...' : t('pendingRequests.accept') }}
                   </button>
                   <button 
                     @click="refuseRequest(request)"
-                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                    :disabled="isLoadingAction && currentAction === 'refuse'"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    {{ t('pendingRequests.refuse') }}
+                    <Loader2 v-if="isLoadingAction && currentAction === 'refuse'" class="animate-spin" :size="16" />
+                    {{ isLoadingAction && currentAction === 'refuse' ? 'Refusing...' : t('pendingRequests.refuse') }}
                   </button>
                 </div>
               </div>
@@ -62,6 +66,8 @@
       :current-lang="currentLang" 
       :t="t"
       :get-city-color="getCityColor"
+      :is-loading="isLoadingAction"
+      :current-action="currentAction"
       @close-modal="selectedClient = null"
       @set-city-color="setCityColor"
       @download-pdf="downloadClientPDF"
@@ -75,6 +81,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { Loader2 } from 'lucide-vue-next'
 import { apiService } from '../../api/axios.js'
 import ClientHeader from './components/ClientHeader.vue'
 import ClientStats from './components/ClientStats.vue'
@@ -88,6 +95,7 @@ import FooterComponent from '../basics/FooterComponent.vue'
 export default {
   name: 'ClientListComponent',
   components: { 
+    Loader2,
     ClientHeader, 
     ClientStats, 
     ClientGrid, 
@@ -105,6 +113,8 @@ export default {
     const pendingRequests = ref([])
     const loading = ref(true)
     const currentLang = ref('fr')
+    const isLoadingAction = ref(false)
+    const currentAction = ref('')
 
     const loadLanguagePreference = () => {
       const saved = localStorage.getItem('preferredLanguage')
@@ -317,6 +327,9 @@ export default {
     }
 
     const markAsDelivered = async (client) => {
+      isLoadingAction.value = true
+      currentAction.value = 'deliver'
+      
       try {
         const response = await apiService.colis.update(client.id, { status: 'livré', payementStatus: 'PAID' })
         
@@ -334,10 +347,16 @@ export default {
       } catch (error) {
         console.error('Update status error:', error)
         alert(t('errorUpdatingStatus'))
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const acceptRequest = async (request) => {
+      isLoadingAction.value = true
+      currentAction.value = 'accept'
+      
       try {
         const response = await apiService.colis.acceptRequest(request.id)
         
@@ -352,10 +371,16 @@ export default {
       } catch (error) {
         console.error('Accept request error:', error)
         alert('Failed to accept request')
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
     const refuseRequest = async (request) => {
+      isLoadingAction.value = true
+      currentAction.value = 'refuse'
+      
       try {
         const response = await apiService.colis.refuseRequest(request.id)
         
@@ -369,6 +394,9 @@ export default {
       } catch (error) {
         console.error('Refuse request error:', error)
         alert('Failed to refuse request')
+      } finally {
+        isLoadingAction.value = false
+        currentAction.value = ''
       }
     }
 
@@ -480,6 +508,8 @@ export default {
       clients,
       pendingRequests,
       loading,
+      isLoadingAction,
+      currentAction,
       currentLang,
       t,
       route,

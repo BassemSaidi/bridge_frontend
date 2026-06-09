@@ -38,7 +38,7 @@
 
       <div class="max-w-2xl mb-12">
         <p class="text-xl md:text-xl text-slate-400 leading-snug font-medium italic opacity-90">
-          "{{ profile.Bio || t('defaultBio') }}"
+          "{{ profile.bio || t('defaultBio') }}"
         </p>
       </div>
 
@@ -47,7 +47,7 @@
         <div class="xl:col-span-2 grid grid-cols-2 gap-4">
           <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
             <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">{{ t('ratePerKg') }}</p>
-            <p class="text-3xl font-black text-white leading-none">{{ profile.pricePerKg }}<span class="text-sm ml-1 text-indigo-400">€</span></p>
+            <p class="text-3xl font-black text-white leading-none">{{ profile.priceperkg }}<span class="text-sm ml-1 text-indigo-400">€</span></p>
           </div>
           
           <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
@@ -57,30 +57,46 @@
         </div>
 
         <div class="xl:col-span-3 bg-white/5 border border-white/10 rounded-[2.5rem] p-2 flex flex-col sm:flex-row gap-2 backdrop-blur-xl">
-          
-          <button @click="callPrimary(profile.Tel1)" 
+
+          <button @click="callPrimary(profile.tel1)"
                   class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-indigo-600 hover:bg-indigo-500 transition-all group overflow-hidden">
             <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
               <Phone :size="20" class="text-white group-hover:rotate-12 transition-transform" />
             </div>
             <div class="text-left min-w-0">
               <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest mb-0.5">Voice Line</p>
-              <p class="text-lg font-black text-white truncate">{{ profile.Tel1 }}</p>
+              <p class="text-lg font-black text-white truncate">{{ profile.tel1 }}</p>
             </div>
           </button>
 
-          <button @click="openWhatsApp(profile.Tel2W || profile.Tel1)" 
+          <button @click="openWhatsApp(profile.tel2w || profile.tel1)"
                   class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-all group">
             <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
               <MessageCircle :size="20" class="text-emerald-400 group-hover:scale-110 transition-transform" />
             </div>
             <div class="text-left min-w-0">
               <p class="text-[8px] font-black text-white/30 uppercase tracking-widest mb-0.5">WhatsApp</p>
-              <p class="text-lg font-black text-white truncate">{{ profile.Tel2W || profile.Tel1 }}</p>
+              <p class="text-lg font-black text-white truncate">{{ profile.tel2w || profile.tel1 }}</p>
             </div>
           </button>
 
         </div>
+      </div>
+
+      <!-- Active Routes Section -->
+      <div v-if="profile.paystrajet && profile.paystrajet.length > 0" class="mt-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-8 h-8 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+            <Route :size="16" class="text-indigo-400" />
+          </div>
+          <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">{{ t('activeRoutes') }}</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <div v-for="(route, idx) in profile.paystrajet" :key="idx" class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm backdrop-blur-md">
+            {{ route }}
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -163,7 +179,7 @@ export default {
         verifiedTransporter: 'Agréé & Vérifié',
         ratePerKg: 'Price per KG',
         fleetType: 'Vehicle',
-        activeRoutes: 'Trips',
+        activeRoutes: 'Active Routes',
         journeyGuidelines: 'Service Protocol',
         availableNow: 'Currently Operational',
         professionalExperience: 'Expertise & Mission',
@@ -180,13 +196,18 @@ export default {
         professionalServices: 'Professional Services',
         serviceDescription: 'Service Description',
         professionalCommitment: 'Professional Commitment',
-        serviceQualityPromise: 'Service Quality Promise'
+        serviceQualityPromise: 'Service Quality Promise',
+        steps: 'steps',
+        items: 'items',
+        noExpeditions: 'No Expeditions',
+        origin: 'Origin',
+        destination: 'Destination'
       },
       fr: {
         verifiedTransporter: 'Agréé & Vérifié',
         ratePerKg: 'Prix par KG',
         fleetType: 'Véhicule',
-        activeRoutes: 'Voyages',
+        activeRoutes: 'Routes Actives',
         journeyGuidelines: 'Protocole de Service',
         availableNow: 'Actuellement Disponible',
         professionalExperience: 'Expertise & Mission',
@@ -203,7 +224,12 @@ export default {
         professionalServices: 'Services Professionnels',
         serviceDescription: 'Description des services',
         professionalCommitment: 'Engagement Professionnel',
-        serviceQualityPromise: 'Promesse de Qualité des Services'
+        serviceQualityPromise: 'Promesse de Qualité des Services',
+        steps: 'étapes',
+        items: 'articles',
+        noExpeditions: 'Aucune expédition',
+        origin: 'Origine',
+        destination: 'Destination'
       }
     }
 
@@ -226,9 +252,14 @@ export default {
         const profileId = route.params.id
         // Replace with your actual production URL when deploying
         const response = await apiService.accounts.getById(profileId)
-        
+
         if (response.data.success) {
-          profile.value = response.data.data
+          const profileData = response.data.data
+          // Parse paystrajet from JSON string if it's a string
+          profileData.paystrajet = typeof profileData.paystrajet === 'string'
+            ? JSON.parse(profileData.paystrajet || '[]')
+            : (profileData.paystrajet || [])
+          profile.value = profileData
           const tripsRes = await apiService.voyages.getByAccountId(profileId)
           if (tripsRes.data.success) activeTrips.value = tripsRes.data.data
         }
@@ -242,7 +273,7 @@ export default {
     // 5. INTERACTION HANDLERS
     const copyContactInfo = () => {
       if (!profile.value) return
-      const text = `${profile.value.nom} | ${profile.value.Tel1} | ${profile.value.pricePerKg}€/kg`
+      const text = `${profile.value.nom} | ${profile.value.tel1} | ${profile.value.priceperkg}€/kg`
       navigator.clipboard.writeText(text)
       // Optional: Add a toast notification here
     }
