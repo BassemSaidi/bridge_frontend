@@ -58,7 +58,7 @@
                 </div>
                 <div class="absolute -bottom-0 -right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
-              <span class="text-sm font-medium">{{ currentUser?.name?.split(' ')[0] || 'User' }}</span>
+              <span class="text-sm font-medium">{{ currentUser?.nom?.split(' ')[0] || 'User' }}</span>
               <ChevronDown :size="16" class="text-white/80" />
             </button>
             
@@ -71,8 +71,8 @@
                     <User :size="28" class="text-white" />
                   </div>
                   <div class="flex-1">
-                    <h3 class="text-white font-bold text-lg">{{ currentUser?.name || 'User' }}</h3>
-                    <p class="text-white/80 text-sm">{{ currentUser?.email || 'user@example.com' }}</p>
+                    <h3 class="text-white font-bold text-lg">{{ currentUser?.nom || 'User' }}</h3>
+                    <p class="text-white/80 text-sm">{{ currentUser?.email || 'BridgeTN family' }}</p>
                   </div>
                 </div>
               </div>
@@ -131,6 +131,13 @@
                   <span>{{ currentLang === 'en' ? 'New Trip' : 'Nouveau Voyage' }}</span>
                 </router-link>
                 
+                <button 
+                  @click="shareProfile"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl w-full"
+                >
+                  <Share :size="18" />
+                  <span>{{ currentLang === 'en' ? 'Share Profile' : 'Partager Profil' }}</span>
+                </button>
                 
                 <hr class="my-2 border-slate-200" />
                 
@@ -245,8 +252,8 @@
                 <div class="absolute -bottom-0 -right-0 w-2 h-2 bg-green-500 rounded-full border border-white"></div>
               </div>
               <div>
-                <div class="text-sm font-medium text-slate-900">{{ currentUser?.name || 'User' }}</div>
-                <div class="text-xs text-slate-500">{{ currentUser?.email || 'user@example.com' }}</div>
+                <div class="text-sm font-medium text-slate-900">{{ currentUser?.nom || 'User' }}</div>
+                <div class="text-xs text-slate-500">{{ currentUser?.email || 'BridgeTN family' }}</div>
               </div>
             </div>
             
