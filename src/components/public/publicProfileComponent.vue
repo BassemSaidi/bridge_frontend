@@ -251,8 +251,8 @@ export default {
       loading.value = true
       try {
         const profileId = route.params.id
-        // Replace with your actual production URL when deploying
-        const response = await apiService.accounts.getById(profileId)
+        // Use public API endpoint for public profiles
+        const response = await apiService.public.getAccount(profileId)
 
         if (response.data.success) {
           const profileData = response.data.data
@@ -272,8 +272,8 @@ export default {
           profileData.interdits = Array.isArray(profileData.interdits) ? profileData.interdits : []
           profile.value = profileData
 
-          // Fetch trips by account ID
-          const tripsRes = await apiService.voyages.getByAccountId(profileId)
+          // Fetch trips by account ID using public API
+          const tripsRes = await apiService.public.getTrips(profileId)
           if (tripsRes.data.success) activeTrips.value = tripsRes.data.data
         }
       } catch (e) {
