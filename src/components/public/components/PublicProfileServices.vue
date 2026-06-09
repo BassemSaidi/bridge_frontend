@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
       <div v-for="item in profile.interdits" :key="item" 
            class="flex items-center gap-4 p-4 rounded-xl transition-all duration-200">
         
