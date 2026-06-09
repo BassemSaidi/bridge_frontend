@@ -14,7 +14,7 @@
         <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest">{{ t('routes') }}</h4>
         <button 
           v-if="isEditing" 
-          @click="$emit('add-item', 'paysTrajet')" 
+          @click="$emit('add-item', 'paystrajet')" 
           class="text-xs font-black text-indigo-600 hover:underline"
         >
           + ADD COUNTRY
@@ -22,18 +22,18 @@
       </div>
       
       <div class="flex flex-wrap gap-3">
-        <div v-for="(route, idx) in profile.paysTrajet" :key="idx" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-bold text-sm border border-indigo-100 shadow-sm">
+        <div v-for="(route, idx) in profile.paystrajet" :key="idx" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-bold text-sm border border-indigo-100 shadow-sm">
           <MapPin :size="14" />
           <input 
             v-if="isEditing" 
-            v-model="profile.paysTrajet[idx]" 
+            v-model="profile.paystrajet[idx]" 
             placeholder="Country" 
             class="bg-transparent border-none outline-none w-20" 
           />
           <span v-else>{{ route }}</span>
           <button 
             v-if="isEditing" 
-            @click="$emit('remove-item', 'paysTrajet', idx)" 
+            @click="$emit('remove-item', 'paystrajet', idx)" 
             class="ml-1 text-indigo-300 hover:text-red-500"
           >
             ×

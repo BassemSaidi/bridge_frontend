@@ -80,7 +80,7 @@ export default {
   setup() {
     const lang = ref('en')
     const isEditing = ref(false)
-    const profile = ref({ nom: '', tel1: '', tel2w: '', bio: '', voiture: '', paysTrajet: [], guide: [], interdits: [], priceperkg: 0 })
+    const profile = ref({ nom: '', tel1: '', tel2w: '', bio: '', voiture: '', paystrajet: [], guide: [], interdits: [], priceperkg: 0 })
 
     const translations = {
       en: { 
@@ -136,7 +136,7 @@ export default {
       const response = await apiService.accounts.getMe()
       if (response.data.success) {
         profile.value = { ...response.data.data, 
-          paysTrajet: Array.isArray(response.data.data.paysTrajet) ? response.data.data.paysTrajet : JSON.parse(response.data.data.paysTrajet || '[]'),
+          paystrajet: Array.isArray(response.data.data.paystrajet) ? response.data.data.paystrajet : JSON.parse(response.data.data.paystrajet || '[]'),
           guide: Array.isArray(response.data.data.guide) ? response.data.data.guide : JSON.parse(response.data.data.guide || '[]'),
           interdits: Array.isArray(response.data.data.interdits) ? response.data.data.interdits : JSON.parse(response.data.data.interdits || '[]')
         }
@@ -147,7 +147,7 @@ export default {
       const user = JSON.parse(localStorage.getItem('user'))
       const updateData = {
         ...profile.value,
-        paysTrajet: cleanArray(profile.value.paysTrajet),
+        paystrajet: cleanArray(profile.value.paystrajet),
         guide: cleanArray(profile.value.guide),
         interdits: cleanArray(profile.value.interdits)
       }
