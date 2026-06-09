@@ -266,10 +266,9 @@ export default {
         }
         
         const response = await apiService.colis.create(colisData)
-        
+
         if (response.data.success) {
           success.value = t('packageCreatedSuccessfully')
-          generatePDF()
           // Reset form after successful creation
           setTimeout(() => {
             resetForm()
@@ -320,7 +319,7 @@ export default {
       doc.text(`${currentLang.value === 'fr' ? 'Poids' : 'Weight'}: ${form.value.weight} KG`, 20, 110);
       doc.text(`${currentLang.value === 'fr' ? 'Statut' : 'Status'}: ${form.value.isPaid ? 'PAID' : 'COLLECT CASH'}`, 20, 117);
       doc.setFontSize(14);
-      doc.text(`${currentLang.value === 'fr' ? 'Total' : 'Total'}: ${(form.value.weight * (account?.pricePerKg || 0)).toFixed(2)} EUR`, 130, 117);
+      doc.text(`${currentLang.value === 'fr' ? 'Total' : 'Total'}: ${(form.value.weight * (account?.priceperkg || 0)).toFixed(2)} EUR`, 130, 117);
 
       doc.save(`Slip_${form.value.senderName}.pdf`);
     }
