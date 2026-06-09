@@ -35,34 +35,7 @@
           </router-link>
 
         <!-- Desktop Navigation Actions -->
-        <div class="hidden sm:flex items-center gap-2">
-
-          <!-- Share Profile -->
-          <button 
-            @click="shareProfile"
-            class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all duration-200"
-          >
-            <Share :size="16" />
-            <span>{{ currentLang === 'en' ? 'Share' : 'Partager' }}</span>
-          </button>
-
-          <!-- My Trips -->
-          <router-link 
-            to="/voyages"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 hover:text-indigo-700 hover:bg-slate-50 rounded-lg transition-all duration-200"
-          >
-            <Users :size="16" />
-            <span>{{ currentLang === 'en' ? 'My Trips' : 'Mes Voyages' }}</span>
-          </router-link>
-
-          <!-- Add Trip -->
-          <router-link 
-            to="/addtrip"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 shadow-sm"
-          >
-            <Plus :size="16" />
-            <span>{{ currentLang === 'en' ? 'New Trip' : 'Nouveau' }}</span>
-          </router-link>
+        <div class="hidden sm:flex items-center gap-3">
 
             <!-- Language Toggle -->
             <button 
@@ -72,43 +45,107 @@
             <Globe :size="16" />
             <span>{{ currentLang === 'en' ? 'FR' : 'EN' }}</span>
           </button>
+          
           <!-- User Profile -->
-          <div v-if="isLoggedIn" class="flex items-center gap-3 ml-4 pl-4 border-l border-slate-200">
-            <div class="relative">
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                <User :size="16" class="text-white" />
+          <div v-if="isLoggedIn" class="relative profile-dropdown">
+            <button 
+              @click="toggleProfileMenu"
+              class="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-lg hover:shadow-indigo-200/50 transition-all duration-300"
+            >
+              <div class="relative">
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <User :size="16" class="text-white" />
+                </div>
+                <div class="absolute -bottom-0 -right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-white"></div>
               </div>
-              <div class="absolute -bottom-0 -right-0 w-2 h-2 bg-green-500 rounded-full border border-white"></div>
-            </div>
-            <!-- Profile Dropdown -->
-            <div class="relative profile-dropdown">
-              <button 
-                @click="toggleProfileMenu"
-                class="flex items-center gap-1 p-1 rounded-lg hover:bg-slate-100 transition-all duration-200"
-                title="Profile Menu"
-              >
-                <ChevronDown :size="16" class="text-slate-400" />
-              </button>
+              <span class="text-sm font-medium">{{ currentUser?.name?.split(' ')[0] || 'User' }}</span>
+              <ChevronDown :size="16" class="text-white/80" />
+            </button>
+            
+            <!-- Enhanced Profile Dropdown -->
+            <div v-if="profileMenuOpen" class="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/50 overflow-hidden z-50">
+              <!-- Profile Header -->
+              <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5">
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+                    <User :size="28" class="text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-white font-bold text-lg">{{ currentUser?.name || 'User' }}</h3>
+                    <p class="text-white/80 text-sm">{{ currentUser?.email || 'user@example.com' }}</p>
+                  </div>
+                </div>
+              </div>
               
-              <!-- Dropdown Menu -->
-              <div v-if="profileMenuOpen" class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/50 py-2 z-50">
+              <!-- Quick Stats -->
+              <div class="grid grid-cols-2 gap-px bg-slate-100">
+                <div class="bg-white p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer" @click="goToPendingRequests">
+                  <div class="text-2xl font-bold text-indigo-600">{{ pendingCount }}</div>
+                  <div class="text-xs text-slate-500 uppercase tracking-wider">{{ currentLang === 'en' ? 'Requests' : 'Demandes' }}</div>
+                </div>
+                <div class="bg-white p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer" @click="router.push('/voyages')">
+                  <div class="text-2xl font-bold text-emerald-600">{{ tripCount }}</div>
+                  <div class="text-xs text-slate-500 uppercase tracking-wider">{{ currentLang === 'en' ? 'Trips' : 'Voyages' }}</div>
+                </div>
+              </div>
+              
+              <!-- Quick Actions -->
+              <div class="p-2 space-y-1">
                 <router-link 
                   to="/profile"
-                  class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-lg"
                   @click="closeProfileMenu"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl"
                 >
-                  <User :size="16" />
+                  <User :size="18" />
                   <span>{{ currentLang === 'en' ? 'My Profile' : 'Mon Profil' }}</span>
                 </router-link>
                 
+                <router-link 
+                  to="/voyages"
+                  @click="closeProfileMenu"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl"
+                >
+                  <Users :size="18" />
+                  <span>{{ currentLang === 'en' ? 'My Trips' : 'Mes Voyages' }}</span>
+                </router-link>
+                
+                <button 
+                  @click="goToPendingRequests"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl w-full"
+                >
+                  <div class="relative">
+                    <Bell :size="18" />
+                    <span v-if="pendingCount > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                      {{ pendingCount > 9 ? '9+' : pendingCount }}
+                    </span>
+                  </div>
+                  <span>{{ currentLang === 'en' ? 'Requests' : 'Demandes' }}</span>
+                </button>
+                
+                <router-link 
+                  to="/addtrip"
+                  @click="closeProfileMenu"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl"
+                >
+                  <Plus :size="18" />
+                  <span>{{ currentLang === 'en' ? 'New Trip' : 'Nouveau Voyage' }}</span>
+                </router-link>
+                
+                <button 
+                  @click="shareProfile"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl w-full"
+                >
+                  <Share :size="18" />
+                  <span>{{ currentLang === 'en' ? 'Share Profile' : 'Partager Profil' }}</span>
+                </button>
                 
                 <hr class="my-2 border-slate-200" />
                 
                 <button 
                   @click="handleLogout"
-                  class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 rounded-lg w-full"
+                  class="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 rounded-xl w-full"
                 >
-                  <LogOut :size="16" />
+                  <LogOut :size="18" />
                   <span>{{ currentLang === 'en' ? 'Logout' : 'Déconnexion' }}</span>
                 </button>
               </div>
@@ -119,7 +156,7 @@
           <router-link 
             v-else
             to="/login"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+            class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:shadow-lg hover:shadow-indigo-200/50 transition-all duration-300"
           >
             <User :size="16" />
             <span>{{ currentLang === 'en' ? 'Login' : 'Connexion' }}</span>
@@ -180,6 +217,20 @@
             <Users :size="18" />
             {{ currentLang === 'en' ? 'My Trips' : 'Mes Voyages' }}
           </router-link>
+
+          <!-- Notifications (Mobile) -->
+          <button 
+            @click="goToPendingRequests"
+            class="flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+          >
+            <div class="relative">
+              <Bell :size="18" />
+              <span v-if="pendingCount > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                {{ pendingCount > 9 ? '9+' : pendingCount }}
+              </span>
+            </div>
+            {{ currentLang === 'en' ? 'Requests' : 'Demandes' }}
+          </button>
 
           <!-- Add Trip -->
           <router-link 
@@ -263,7 +314,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Bell
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -272,6 +324,8 @@ const profileMenuOpen = ref(false)
 const currentLang = ref('en')
 const isLoggedIn = ref(false)
 const currentUser = ref(null)
+const pendingCount = ref(0)
+const tripCount = ref(0)
 
 // Props for customization
 const props = defineProps({
@@ -360,6 +414,41 @@ const handleLogout = () => {
   router.push('/login')
 }
 
+// Load pending requests count
+const loadPendingCount = async () => {
+  if (!isLoggedIn.value) return
+  
+  try {
+    const { apiService } = await import('../../../api/axios.js')
+    const response = await apiService.colis.getPendingCount()
+    if (response.data.success) {
+      pendingCount.value = response.data.data.count
+    }
+  } catch (error) {
+    console.error('Error loading pending count:', error)
+  }
+}
+
+// Load trip count
+const loadTripCount = async () => {
+  if (!isLoggedIn.value) return
+  
+  try {
+    const { apiService } = await import('../../../api/axios.js')
+    const response = await apiService.voyages.getAll()
+    if (response.data.success) {
+      tripCount.value = response.data.data.length
+    }
+  } catch (error) {
+    console.error('Error loading trip count:', error)
+  }
+}
+
+// Go to pending requests
+const goToPendingRequests = () => {
+  router.push('/pending-requests')
+}
+
 // Close menus when clicking outside
 const handleClickOutside = (event) => {
   // Close profile dropdown if clicking outside
@@ -376,6 +465,8 @@ const handleClickOutside = (event) => {
 onMounted(() => {
   checkLoginStatus()
   loadLanguagePreference()
+  loadPendingCount()
+  loadTripCount()
   document.addEventListener('click', handleClickOutside)
 })
 

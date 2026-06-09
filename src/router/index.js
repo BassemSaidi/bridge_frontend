@@ -11,6 +11,8 @@ import AdminComponent from '../components/admin/adminComponent.vue'
 import AddTripComponent from '../components/addtrip/addtripComponent.vue'
 import PublicProfileComponent from '../components/public/publicProfileComponent.vue'
 import ShareComponent from '../components/share/shareComponent.vue'
+import UpcomingTripsComponent from '../components/upcoming/upcomingTripsComponent.vue'
+import PendingRequestsComponent from '../components/pending/pendingRequestsComponent.vue'
 import { requireAuth } from './guard'
 
 const routes = [
@@ -108,6 +110,11 @@ const routes = [
     component: ViewComponent
   },
   {
+    path: '/upcoming-trips',
+    name: 'UpcomingTrips',
+    component: UpcomingTripsComponent
+  },
+  {
     path: '/profil/:id',
     name: 'PublicProfile',
     component: PublicProfileComponent
@@ -134,6 +141,19 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: AdminComponent,
+    beforeEnter: (to, from, next) => {
+      const redirect = requireAuth()
+      if (redirect) {
+        next(redirect)
+      } else {
+        next()
+      }
+    }
+  },
+  {
+    path: '/pending-requests',
+    name: 'PendingRequests',
+    component: PendingRequestsComponent,
     beforeEnter: (to, from, next) => {
       const redirect = requireAuth()
       if (redirect) {

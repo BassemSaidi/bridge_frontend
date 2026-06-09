@@ -56,6 +56,13 @@
             {{ currentLang === 'en' ? 'Home' : 'Accueil' }}
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
         </a>
+        <router-link 
+            to="/upcoming-trips"
+            class="text-sm lg:text-base font-medium text-slate-600 hover:text-indigo-600 transition-colors duration-200 relative group"
+            >
+            {{ currentLang === 'en' ? 'Upcoming Trips' : 'Voyages à Venir' }}
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
+        </router-link>
         <a 
             href="#track"
             class="text-sm lg:text-base font-medium text-slate-600 hover:text-indigo-600 transition-colors duration-200 relative group"
@@ -137,6 +144,15 @@
             <Home :size="18" />
             {{ currentLang === 'en' ? 'Home' : 'Accueil' }}
           </a>
+
+          <router-link 
+          to="/upcoming-trips"
+          @click="closeMobileMenu"
+          class="flex items-center gap-3 px-4 py-3 text-base font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200"
+          >
+          <Package :size="18" />
+          {{ currentLang === 'en' ? 'Upcoming Trips' : 'Voyages à Venir' }}
+        </router-link>
 
           <a 
           href="#track"

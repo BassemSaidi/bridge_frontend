@@ -1,9 +1,9 @@
 <template>
   <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200 relative overflow-hidden">
     <div class="absolute top-0 right-0 p-8">
-      <div :class="getStatusTheme(tripData.current_status?.status || tripData.status)" 
+      <div :class="getStatusTheme(tripData.status)" 
            class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-tighter">
-        {{ formatStatus(tripData.current_status?.status || tripData.status) }}
+        {{ formatStatus(tripData.status) }}
       </div>
     </div>
 
@@ -11,15 +11,15 @@
       <div class="space-y-1">
         <p class="text-sm font-semibold text-indigo-600 uppercase tracking-wider">{{ t('currentLocation') }}</p>
         <h2 class="text-4xl font-black text-slate-900 tracking-tight">
-          {{ tripData.current_status?.current_city || t('arrivalZone') }}
+          {{ tripData.current_location?.name || t('arrivalZone') }}
         </h2>
         <p class="text-slate-500 flex items-center gap-1">
-          <MapPin :size="16" /> {{ tripData.current_status?.current_country || tripData.PaysF }}
+          <MapPin :size="16" /> {{ tripData.current_location?.country || tripData.PaysF }}
         </p>
       </div>
 
       <!-- Important Message Section - Enhanced Design -->
-      <div v-if="tripData.current_status?.message" 
+      <div v-if="tripData.status_message" 
            class="relative bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 rounded-2xl p-6 border border-indigo-100/50 shadow-lg shadow-indigo-100/30">
         <div class="absolute -top-2 -left-2 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
           <Info :size="16" class="text-white" />
@@ -31,7 +31,7 @@
           <div class="flex-1">
             <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">{{ t('importantMessage') }}</p>
             <p class="text-indigo-900 text-base leading-relaxed font-medium">
-              "{{ tripData.current_status.message }}"
+              "{{ tripData.status_message }}"
             </p>
             <div class="mt-3 flex items-center gap-2">
               <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
@@ -61,7 +61,8 @@ export default {
         'en_route': 'bg-indigo-100 text-indigo-700',
         'arrived': 'bg-emerald-100 text-emerald-700',
         'panne': 'bg-red-100 text-red-700',
-        'delayed': 'bg-amber-100 text-amber-700'
+        'delayed': 'bg-amber-100 text-amber-700',
+        'a arriver': 'bg-slate-100 text-slate-700'
       }
       return themes[status] || 'bg-slate-100 text-slate-700'
     },
@@ -71,7 +72,8 @@ export default {
         'en_route': this.t('onTheWay'), 
         'arrived': this.t('finalized'), 
         'panne': this.t('underRepair'),
-        'delayed': this.t('delayed')
+        'delayed': this.t('delayed'),
+        'a arriver': this.t('inTransit')
       }
       return map[status] || status
     }

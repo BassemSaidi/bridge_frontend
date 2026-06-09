@@ -17,7 +17,8 @@
       <!-- Stats Cards -->
       <VoyageStats 
         :completed-count="completedTrips.length"
-        :active-count="otherTrips.length"
+        :in-progress-count="inProgressTrips.length"
+        :upcoming-count="upcomingTrips.length"
         :total-count="voyages.length"
         :current-lang="currentLang"
         :t="t"
@@ -27,20 +28,32 @@
       <VoyageFilters 
       :active-filter="activeFilter"
       :completed-count="completedTrips.length"
-      :active-count="otherTrips.length"
+      :in-progress-count="inProgressTrips.length"
+      :upcoming-count="upcomingTrips.length"
       :total-count="voyages.length"
       :current-lang="currentLang"
       :t="t"
       @filter-change="handleFilterChange"
       />
       
-      
-            <div v-if="activeFilter === 'all' || activeFilter === 'active'">
-              <!-- Active Trips Section -->
+            <div v-if="activeFilter === 'all' || activeFilter === 'upcoming'">
+              <!-- Upcoming Trips Section -->
               <VoyageSection 
-                v-if="otherTrips.length > 0"
-                :trips="otherTrips"
-                type="active"
+                v-if="upcomingTrips.length > 0"
+                :trips="upcomingTrips"
+                type="upcoming"
+                :current-lang="currentLang"
+                :t="t"
+                @delete-voyage="deleteVoyage"
+              />
+            </div>
+            
+            <div v-if="activeFilter === 'all' || activeFilter === 'in-progress'">
+              <!-- In Progress Trips Section -->
+              <VoyageSection 
+                v-if="inProgressTrips.length > 0"
+                :trips="inProgressTrips"
+                type="in-progress"
                 :current-lang="currentLang"
                 :t="t"
                 @delete-voyage="deleteVoyage"
@@ -118,14 +131,17 @@ export default {
         manageTransportMissions: 'Manage your transport missions efficiently',
         completed: 'Completed',
         inProgress: 'In Progress',
+        upcoming: 'Upcoming',
         total: 'Total',
         allMissions: 'All Missions',
         active: 'Active',
         trips: 'trips',
         completedTrips: 'Completed Expeditions',
         activeTrips: 'Active Expeditions',
+        upcomingTrips: 'Upcoming Expeditions',
         successfullyDelivered: 'Successfully delivered missions',
         currentlyInProgress: 'Currently in progress',
+        upcomingSoon: 'Upcoming soon',
         noTripsFound: 'No expeditions found',
         startByCreating: 'Start by creating your first transport mission',
         createFirstTrip: 'Create Your First Trip',
@@ -152,14 +168,17 @@ export default {
         manageTransportMissions: 'Gérez efficacement vos missions de transport',
         completed: 'Terminées',
         inProgress: 'En cours',
+        upcoming: 'À venir',
         total: 'Total',
         allMissions: 'Toutes les missions',
         active: 'Actives',
         trips: 'voyages',
         completedTrips: 'Expéditions terminées',
         activeTrips: 'Expéditions actives',
+        upcomingTrips: 'Expéditions à venir',
         successfullyDelivered: 'Missions livrées avec succès',
         currentlyInProgress: 'Actuellement en cours',
+        upcomingSoon: 'À venir bientôt',
         noTripsFound: 'Aucune expédition trouvée',
         startByCreating: 'Commencez par créer votre première mission de transport',
         createFirstTrip: 'Créer votre premier voyage',
@@ -225,8 +244,9 @@ export default {
       }
     }
 
-    const completedTrips = computed(() => voyages.value.filter(voyage => voyage.status !== 'a arriver'))
-    const otherTrips = computed(() => voyages.value.filter(voyage => voyage.status === 'a arriver'))
+    const upcomingTrips = computed(() => voyages.value.filter(voyage => voyage.status === 'a arriver'))
+    const inProgressTrips = computed(() => voyages.value.filter(voyage => voyage.status !== 'a arriver' && voyage.status !== 'arrived'))
+    const completedTrips = computed(() => voyages.value.filter(voyage => voyage.status === 'arrived'))
 
     const handleFilterChange = (filter) => {
       activeFilter.value = filter
@@ -288,8 +308,9 @@ export default {
       isLoading, 
       activeFilter, 
       currentLang,
+      upcomingTrips,
+      inProgressTrips,
       completedTrips, 
-      otherTrips, 
       handleFilterChange,
       handleLanguageChange,
       deleteVoyage,

@@ -14,6 +14,36 @@
       <!-- Clients Grid with Stats -->
       <div v-else-if="clients.length > 0" class="space-y-8">
         
+        <!-- Pending Requests Section -->
+        <div v-if="pendingRequests.length > 0" class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200">
+          <h2 class="text-xl font-bold text-amber-900 mb-4">{{ t('pendingRequests.title') }}</h2>
+          <div class="space-y-3">
+            <div v-for="request in pendingRequests" :key="request.id" class="bg-white rounded-lg p-4 shadow-sm border border-amber-100">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex-1">
+                  <p class="font-semibold text-slate-900">{{ request.nomR }}</p>
+                  <p class="text-sm text-slate-600">{{ request.adresseR }}</p>
+                  <p class="text-sm text-slate-600">{{ t('weight') }}: {{ request.KgCo }} kg | {{ t('itemCount') }}: {{ request.nb_box }}</p>
+                </div>
+                <div class="flex gap-2">
+                  <button 
+                    @click="acceptRequest(request)"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    {{ t('pendingRequests.accept') }}
+                  </button>
+                  <button 
+                    @click="refuseRequest(request)"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                  >
+                    {{ t('pendingRequests.refuse') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Stats Cards -->
         <ClientStats :clients="clients" :current-lang="currentLang" :t="t" />
 
@@ -72,6 +102,7 @@ export default {
     const tripID = ref(route.query.voyage_id || "")
     const selectedClient = ref(null)
     const clients = ref([])
+    const pendingRequests = ref([])
     const loading = ref(true)
     const currentLang = ref('fr')
 
@@ -144,7 +175,12 @@ export default {
         statusUpdated: 'Status updated',
         nowDelivered: 'is now delivered',
         errorUpdatingStatus: 'Error updating status',
-        itemCount: 'Number of boxes'
+        itemCount: 'Number of boxes',
+        pendingRequests: {
+          title: 'Pending Package Requests',
+          accept: 'Accept',
+          refuse: 'Refuse'
+        }
       },
       fr: {
         cargoManifest: 'Manifeste Cargo',
@@ -203,7 +239,12 @@ export default {
         statusUpdated: 'Statut mis à jour',
         nowDelivered: 'est maintenant livré',
         errorUpdatingStatus: 'Erreur lors de la mise à jour du statut',
-        itemCount: 'Nombre de boîtes'
+        itemCount: 'Nombre de boîtes',
+        pendingRequests: {
+          title: 'Demandes de colis en attente',
+          accept: 'Accepter',
+          refuse: 'Refuser'
+        }
       }
     }
 
@@ -224,31 +265,48 @@ export default {
             voyageCodeT = voyageResponse.data.data.codeT
           }
           
-          const mappedClients = response.data.data.map(colis => ({
-            id: colis.idCo,
-            name: colis.nomR || 'Sans Nom',
-            city: colis.detailsR || 'Ville non spécifiée',
-            address: colis.adresseR || 'Pas d\'adresse',
-            weight: parseFloat(colis.KgCo) || 0,
-            phone: colis.TelR || '',
-            paid: colis.payementStatus === 'PAID',
-            status: colis.status || 'en route',
-            notes: `De: ${colis.nomS || 'Anonyme'} (${colis.TelS || 'N/A'})`,
-            nomS: colis.nomS,
-            TelS: colis.TelS,
-            adresseS: colis.adresseS,
-            detailsS: colis.detailsS,
-            nomR: colis.nomR,
-            TelR: colis.TelR,
-            adresseR: colis.adresseR,
-            detailsR: colis.detailsR,
-            prixTotale: colis.prixTotale,
-            voyage_id: colis.voyage_id,
-            codeT: voyageCodeT,
-            nb_box: colis.nb_box,
-          }))
+          // Separate pending requests from accepted clients
+          const pending = []
+          const accepted = []
           
-          clients.value = mappedClients
+          response.data.data.forEach(colis => {
+            if (colis.status === 'demande') {
+              pending.push({
+                id: colis.idCo,
+                nomR: colis.nomR,
+                adresseR: colis.adresseR,
+                KgCo: colis.KgCo,
+                nb_box: colis.nb_box
+              })
+            } else {
+              accepted.push({
+                id: colis.idCo,
+                name: colis.nomR || 'Sans Nom',
+                city: colis.detailsR || 'Ville non spécifiée',
+                address: colis.adresseR || 'Pas d\'adresse',
+                weight: parseFloat(colis.KgCo) || 0,
+                phone: colis.TelR || '',
+                paid: colis.payementStatus === 'PAID',
+                status: colis.status || 'en route',
+                notes: `De: ${colis.nomS || 'Anonyme'} (${colis.TelS || 'N/A'})`,
+                nomS: colis.nomS,
+                TelS: colis.TelS,
+                adresseS: colis.adresseS,
+                detailsS: colis.detailsS,
+                nomR: colis.nomR,
+                TelR: colis.TelR,
+                adresseR: colis.adresseR,
+                detailsR: colis.detailsR,
+                prixTotale: colis.prixTotale,
+                voyage_id: colis.voyage_id,
+                codeT: voyageCodeT,
+                nb_box: colis.nb_box,
+              })
+            }
+          })
+          
+          pendingRequests.value = pending
+          clients.value = accepted
           tripID.value = voyageId
         }
       } catch (error) {
@@ -276,6 +334,41 @@ export default {
       } catch (error) {
         console.error('Update status error:', error)
         alert(t('errorUpdatingStatus'))
+      }
+    }
+
+    const acceptRequest = async (request) => {
+      try {
+        const response = await apiService.colis.acceptRequest(request.id)
+        
+        if (response.data.success) {
+          // Remove from pending requests and reload clients
+          pendingRequests.value = pendingRequests.value.filter(r => r.id !== request.id)
+          await loadClients()
+          alert(t('pendingRequests.accept') + ' - ' + (t('statusUpdated') || 'Success'))
+        } else {
+          alert(response.data.error || 'Failed to accept request')
+        }
+      } catch (error) {
+        console.error('Accept request error:', error)
+        alert('Failed to accept request')
+      }
+    }
+
+    const refuseRequest = async (request) => {
+      try {
+        const response = await apiService.colis.refuseRequest(request.id)
+        
+        if (response.data.success) {
+          // Remove from pending requests
+          pendingRequests.value = pendingRequests.value.filter(r => r.id !== request.id)
+          alert(t('pendingRequests.refuse') + ' - ' + (t('statusUpdated') || 'Success'))
+        } else {
+          alert(response.data.error || 'Failed to refuse request')
+        }
+      } catch (error) {
+        console.error('Refuse request error:', error)
+        alert('Failed to refuse request')
       }
     }
 
@@ -385,6 +478,7 @@ export default {
       tripID,
       selectedClient,
       clients,
+      pendingRequests,
       loading,
       currentLang,
       t,
@@ -392,6 +486,8 @@ export default {
       handleLanguageChange,
       loadClients,
       markAsDelivered,
+      acceptRequest,
+      refuseRequest,
       downloadClientPDF,
       getCityColor,
       setCityColor,

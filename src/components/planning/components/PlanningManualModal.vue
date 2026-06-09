@@ -25,20 +25,6 @@
         </div>
 
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-2">{{ t('currentCity') }}</label>
-          <select v-model="manualData.current_city" 
-                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-            <option value="">{{ t('selectCity') }}</option>
-            <optgroup v-if="activeTrip.villePD?.length" :label="activeTrip.PaysD">
-              <option v-for="city in activeTrip.villePD" :key="`dep-${city}`" :value="city">{{ city }}</option>
-            </optgroup>
-            <optgroup v-if="activeTrip.villePF?.length" :label="activeTrip.PaysF">
-              <option v-for="city in activeTrip.villePF" :key="`arr-${city}`" :value="city">{{ city }}</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div>
           <label class="block text-sm font-bold text-slate-700 mb-2">{{ t('message') }} ({{ t('optional') }})</label>
           <textarea v-model="manualData.message" 
                     :placeholder="t('messagePlaceholder')" 
@@ -48,7 +34,7 @@
 
         <div class="flex gap-4">
           <button @click="$emit('update-status', manualData)" 
-                  :disabled="!manualData.status || !manualData.current_city"
+                  :disabled="!manualData.status"
                   class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl py-4 font-bold transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
             {{ t('updateStatus') }}
           </button>
@@ -91,7 +77,6 @@ export default {
     return {
       manualData: {
         status: '',
-        current_city: '',
         message: ''
       }
     }
@@ -107,7 +92,6 @@ export default {
     resetForm() {
       this.manualData = {
         status: '',
-        current_city: '',
         message: ''
       }
     }

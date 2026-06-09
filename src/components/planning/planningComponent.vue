@@ -191,10 +191,12 @@ export default {
       if (!activeTrip.value) return
       
       try {
-        const response = await apiService.voyages.getById(`${activeTrip.value.idV}/start`)
+        const response = await apiService.voyages.start(activeTrip.value.idV)
         
         if (response.data.success) {
-          await loadTrip()
+          // Directly update the active trip with the response data
+          activeTrip.value = response.data.data
+          console.log('Trip started, updated data:', response.data.data)
         }
       } catch (error) {
         console.error('Error starting trip:', error)
@@ -205,28 +207,12 @@ export default {
       if (!activeTrip.value) return
       
       try {
-        let response
-        
-        if (activeTrip.value.current_status?.current_city === 'On Boat') {
-          response = await apiService.voyages.getById(`${activeTrip.value.idV}/advance`)
-        } else {
-          const allDepartureCities = activeTrip.value.villePD || []
-          const currentCity = activeTrip.value.current_status?.current_city
-          const isLastDepartureCity = allDepartureCities[allDepartureCities.length - 1] === currentCity
-          
-          if (isLastDepartureCity && activeTrip.value.PaysD !== activeTrip.value.PaysF) {
-            response = await apiService.voyages.update(activeTrip.value.idV, {
-              status: 'en_route',
-              current_city: 'On Boat',
-              message: `Traveling from ${activeTrip.value.PaysD} to ${activeTrip.value.PaysF}`
-            })
-          } else {
-            response = await apiService.voyages.getById(`${activeTrip.value.idV}/advance`)
-          }
-        }
+        const response = await apiService.voyages.advance(activeTrip.value.idV)
         
         if (response.data.success) {
-          await loadTrip()
+          // Directly update the active trip with the response data
+          activeTrip.value = response.data.data
+          console.log('Trip advanced, updated data:', response.data.data)
         } else {
           console.error('Auto-advance failed:', response.data.error)
         }
@@ -239,13 +225,17 @@ export default {
       if (!activeTrip.value) return
       
       try {
+        // Calculate the index for the boat position
+        const villePD = activeTrip.value.villePD || []
+        const boatIndex = villePD.length + 1 // After all departure cities and first douane
+        
         const response = await apiService.voyages.update(activeTrip.value.idV, {
-          status: 'en_route',
-          current_city: 'On Boat',
-          message: `Traveling from ${activeTrip.value.PaysD} to ${activeTrip.value.PaysF}`
+          current_city_index: boatIndex,
+          status_message: `Traveling from ${activeTrip.value.PaysD} to ${activeTrip.value.PaysF}`
         })
         
         if (response.data.success) {
+          // Reload trip to get updated data
           await loadTrip()
         }
       } catch (error) {
@@ -257,16 +247,19 @@ export default {
       if (!activeTrip.value) return
       
       try {
-        const allCities = [...(activeTrip.value.villePD || []), ...(activeTrip.value.villePF || [])]
-        const lastCity = allCities[allCities.length - 1]
+        const villePD = activeTrip.value.villePD || []
+        const villePF = activeTrip.value.villePF || []
+        const totalRouteLength = villePD.length + 2 + 2 + villePF.length // cities + douane + boat + douane + cities
+        const lastIndex = totalRouteLength - 1
         
         const response = await apiService.voyages.update(activeTrip.value.idV, {
+          current_city_index: lastIndex,
           status: 'arrived',
-          current_city: lastCity,
-          message: 'Trip completed successfully'
+          status_message: 'Trip completed successfully'
         })
         
         if (response.data.success) {
+          // Reload trip to get updated data
           await loadTrip()
         }
       } catch (error) {
@@ -275,13 +268,20 @@ export default {
     }
 
     const updateStatusManually = async (manualData) => {
-      if (!activeTrip.value || !manualData.status || !manualData.current_city) return
+      if (!activeTrip.value || !manualData.status) return
       
       try {
-        const response = await apiService.voyages.update(activeTrip.value.idV, manualData)
+        // Convert manual data to use status_message instead of message
+        const updateData = {
+          status: manualData.status,
+          status_message: manualData.message || ''
+        }
+        
+        const response = await apiService.voyages.update(activeTrip.value.idV, updateData)
         
         if (response.data.success) {
           showManualModal.value = false
+          // Reload trip to get updated data
           await loadTrip()
         }
       } catch (error) {

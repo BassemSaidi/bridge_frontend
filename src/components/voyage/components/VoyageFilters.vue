@@ -14,27 +14,39 @@
       </button>
       
       <button 
-        @click="$emit('filter-change', 'completed')" 
+        @click="$emit('filter-change', 'upcoming')" 
         :class="[
           'px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 mx-1',
-          activeFilter === 'completed' 
-            ? 'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-lg shadow-slate-200/50' 
+          activeFilter === 'upcoming' 
+            ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-orange-200/50' 
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
         ]"
       >
-        {{ t('completed') }} ({{ completedCount }})
+        {{ t('upcoming') }} ({{ upcomingCount }})
       </button>
       
       <button 
-        @click="$emit('filter-change', 'active')" 
+        @click="$emit('filter-change', 'in-progress')" 
         :class="[
-          'px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300',
-          activeFilter === 'active' 
+          'px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 mx-1',
+          activeFilter === 'in-progress' 
             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200/50' 
             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
         ]"
       >
-        {{ t('active') }} ({{ activeCount }})
+        {{ t('inProgress') }} ({{ inProgressCount }})
+      </button>
+      
+      <button 
+        @click="$emit('filter-change', 'completed')" 
+        :class="[
+          'px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300',
+          activeFilter === 'completed' 
+            ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-200/50' 
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+        ]"
+      >
+        {{ t('completed') }} ({{ completedCount }})
       </button>
     </div>
   </div>
@@ -52,7 +64,11 @@ export default {
       type: Number,
       default: 0
     },
-    activeCount: {
+    inProgressCount: {
+      type: Number,
+      default: 0
+    },
+    upcomingCount: {
       type: Number,
       default: 0
     },

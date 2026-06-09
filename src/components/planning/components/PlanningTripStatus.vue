@@ -27,12 +27,12 @@
           </div>
           <div class="flex-1">
             <h3 class="text-lg font-bold text-slate-900 mb-1">{{ t('currentLocation') }}</h3>
-            <p class="text-2xl font-black text-indigo-600">{{ activeTrip.current_status?.current_city || 'Unknown' }}, {{ activeTrip.current_status?.current_country || 'Unknown' }}</p>
-            <p v-if="activeTrip.current_status?.message" class="text-sm text-slate-600 mt-2">{{ activeTrip.current_status.message }}</p>
+            <p class="text-2xl font-black text-indigo-600">{{ getCurrentLocationName() }}, {{ getCurrentLocationCountry() }}</p>
+            <p v-if="activeTrip.status_message" class="text-sm text-slate-600 mt-2">{{ activeTrip.status_message }}</p>
           </div>
-          <div v-if="activeTrip.current_status?.next_city" class="text-right">
+          <div v-if="getNextLocation()" class="text-right">
             <p class="text-sm font-medium text-slate-500">{{ t('nextStop') }}</p>
-            <p class="text-lg font-bold text-purple-600">{{ activeTrip.current_status.next_city }}</p>
+            <p class="text-lg font-bold text-purple-600">{{ getNextLocation().name }}</p>
           </div>
         </div>
       </div>
@@ -92,6 +92,51 @@ export default {
         month: 'short',
         year: 'numeric'
       })
+    },
+    getCurrentLocationName() {
+      if (this.activeTrip.current_location) {
+        return this.activeTrip.current_location.name
+      }
+      return 'Unknown'
+    },
+    getCurrentLocationCountry() {
+      if (this.activeTrip.current_location) {
+        return this.activeTrip.current_location.country
+      }
+      return 'Unknown'
+    },
+    getNextLocation() {
+      const villePD = this.activeTrip.villePD || []
+      const villePF = this.activeTrip.villePF || []
+      const currentIndex = this.activeTrip.current_city_index || 0
+      
+      // Build the route
+      const route = []
+      
+      // Add departure cities
+      villePD.forEach(city => {
+        route.push({ type: 'city', name: city, country: this.activeTrip.PaysD })
+      })
+      
+      // Add customs before boat
+      route.push({ type: 'customs', name: 'Douane', country: this.activeTrip.PaysD })
+      
+      // Add boat
+      route.push({ type: 'boat', name: 'En Bateau', country: 'International' })
+      
+      // Add customs after boat
+      route.push({ type: 'customs', name: 'Douane', country: this.activeTrip.PaysF })
+      
+      // Add arrival cities
+      villePF.forEach(city => {
+        route.push({ type: 'city', name: city, country: this.activeTrip.PaysF })
+      })
+      
+      // Return next location if exists
+      if (currentIndex >= 0 && currentIndex < route.length - 1) {
+        return route[currentIndex + 1]
+      }
+      return null
     }
   }
 }

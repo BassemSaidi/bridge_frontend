@@ -4,7 +4,7 @@
     
     <div class="space-y-6">
       <!-- On Boat Status -->
-      <div v-if="activeTrip.current_status?.current_city === 'On Boat'" 
+      <div v-if="activeTrip.current_location?.type === 'boat'" 
            class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border-2 border-blue-200">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
@@ -12,13 +12,27 @@
           </div>
           <div class="flex-1">
             <h4 class="text-lg font-bold text-blue-900 mb-1">{{ t('onBoat') }}</h4>
-            <p class="text-blue-700">{{ activeTrip.current_status.message }}</p>
+            <p class="text-blue-700">{{ activeTrip.status_message }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customs Status -->
+      <div v-if="activeTrip.current_location?.type === 'customs'" 
+           class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border-2 border-orange-200">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center">
+            <Settings2 :size="24" class="text-white" />
+          </div>
+          <div class="flex-1">
+            <h4 class="text-lg font-bold text-orange-900 mb-1">{{ t('customs') }}</h4>
+            <p class="text-orange-700">{{ activeTrip.status_message }}</p>
           </div>
         </div>
       </div>
 
       <!-- Manual Status Message -->
-      <div v-if="activeTrip.current_status?.message && activeTrip.current_status.current_city !== 'On Boat'" 
+      <div v-if="activeTrip.status_message && activeTrip.current_location?.type === 'city'" 
            class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border-2 border-amber-200">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
@@ -26,7 +40,7 @@
           </div>
           <div class="flex-1">
             <h4 class="text-lg font-bold text-amber-900 mb-1">{{ t('statusUpdate') }}</h4>
-            <p class="text-amber-700">{{ activeTrip.current_status.message }}</p>
+            <p class="text-amber-700">{{ activeTrip.status_message }}</p>
           </div>
         </div>
       </div>
@@ -49,7 +63,7 @@
                 <p class="text-xs text-slate-500">{{ activeTrip.PaysD }}</p>
               </div>
             </div>
-            <div v-if="isCurrentCity(city)" class="absolute -top-2 -right-2">
+            <div v-if="isCurrentCity(city, 'departure', idx)" class="absolute -top-2 -right-2">
               <div class="w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
                 <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               </div>
@@ -76,7 +90,7 @@
                 <p class="text-xs text-slate-500">{{ activeTrip.PaysF }}</p>
               </div>
             </div>
-            <div v-if="isCurrentCity(city)" class="absolute -top-2 -right-2">
+            <div v-if="isCurrentCity(city, 'arrival', idx)" class="absolute -top-2 -right-2">
               <div class="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
                 <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               </div>
@@ -109,15 +123,26 @@ export default {
     }
   },
   methods: {
-    isCurrentCity(city) {
-      return this.activeTrip?.current_status?.current_city === city
+    isCurrentCity(city, type, index) {
+      if (!this.activeTrip?.current_location) return false
+      if (this.activeTrip.current_location.type !== 'city') return false
+      return this.activeTrip.current_location.name === city
     },
     getCityCardClass(city, type, index) {
-      const isCurrent = this.isCurrentCity(city)
-      const allCities = [...(this.activeTrip?.villePD || []), ...(this.activeTrip?.villePF || [])]
-      const currentStatus = this.activeTrip?.current_status?.status || this.activeTrip?.status
-      const currentIndex = allCities.indexOf(this.activeTrip?.current_status?.current_city)
-      const cityIndex = allCities.indexOf(city)
+      const isCurrent = this.isCurrentCity(city, type, index)
+      const currentStatus = this.activeTrip?.status
+      const currentIndex = this.activeTrip?.current_city_index || 0
+      
+      // Calculate the actual index in the route
+      const villePD = this.activeTrip?.villePD || []
+      const villePF = this.activeTrip?.villePF || []
+      let cityIndex
+      
+      if (type === 'departure') {
+        cityIndex = index
+      } else {
+        cityIndex = villePD.length + 2 + 2 + index // +2 for douane + boat + douane
+      }
       
       if (currentStatus === 'arrived') {
         return 'bg-emerald-50 border-emerald-300'
@@ -132,11 +157,20 @@ export default {
       }
     },
     getCityIconClass(city, type, index) {
-      const isCurrent = this.isCurrentCity(city)
-      const allCities = [...(this.activeTrip?.villePD || []), ...(this.activeTrip?.villePF || [])]
-      const currentStatus = this.activeTrip?.current_status?.status || this.activeTrip?.status
-      const currentIndex = allCities.indexOf(this.activeTrip?.current_status?.current_city)
-      const cityIndex = allCities.indexOf(city)
+      const isCurrent = this.isCurrentCity(city, type, index)
+      const currentStatus = this.activeTrip?.status
+      const currentIndex = this.activeTrip?.current_city_index || 0
+      
+      // Calculate the actual index in the route
+      const villePD = this.activeTrip?.villePD || []
+      const villePF = this.activeTrip?.villePF || []
+      let cityIndex
+      
+      if (type === 'departure') {
+        cityIndex = index
+      } else {
+        cityIndex = villePD.length + 2 + 2 + index // +2 for douane + boat + douane
+      }
       
       if (currentStatus === 'arrived') {
         return 'bg-emerald-600 text-white'

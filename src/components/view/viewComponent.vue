@@ -102,7 +102,7 @@ export default {
         passed: 'Passed',
         upcoming: 'Upcoming',
         completionRate: 'Completion Rate',
-        citiesPassed: 'Cities Passed',
+        citiesPassed: 'Steps Passed',
         remaining: 'Remaining',
         upNext: 'Up Next',
         destinationReached: 'Destination Reached',
@@ -115,7 +115,9 @@ export default {
         onTheWay: 'On The Way',
         finalized: 'Finalized',
         underRepair: 'Under Repair',
-        delayed: 'Delayed'
+        delayed: 'Delayed',
+        onBoat: 'On Boat',
+        customs: 'Customs'
       },
       fr: {
         liveTracking: 'Suivi en Direct',
@@ -130,7 +132,7 @@ export default {
         passed: 'Passé',
         upcoming: 'À Venir',
         completionRate: 'Taux d\'Achèvement',
-        citiesPassed: 'Villes Traversées',
+        citiesPassed: 'Étapes Passées',
         remaining: 'Restantes',
         upNext: 'Prochain Arrêt',
         destinationReached: 'Destination Atteinte',
@@ -143,7 +145,9 @@ export default {
         onTheWay: 'En Route',
         finalized: 'Finalisé',
         underRepair: 'En Réparation',
-        delayed: 'Retardé'
+        delayed: 'Retardé',
+        onBoat: 'En Bateau',
+        customs: 'Douane'
       }
     }
 
@@ -170,22 +174,43 @@ export default {
 
     const allCities = computed(() => {
       if (!tripData.value) return []
-      return [...(tripData.value.villePD || []), ...(tripData.value.villePF || [])]
+      const villePD = tripData.value.villePD || []
+      const villePF = tripData.value.villePF || []
+      
+      // Build the full route: villePD → Douane → Boat → Douane → villePF
+      const route = []
+      
+      // Add departure cities
+      villePD.forEach(city => {
+        route.push({ type: 'city', name: city, country: tripData.value.PaysD })
+      })
+      
+      // Add customs before boat
+      route.push({ type: 'customs', name: 'Douane', country: tripData.value.PaysD })
+      
+      // Add boat
+      route.push({ type: 'boat', name: 'En Bateau', country: 'International' })
+      
+      // Add customs after boat
+      route.push({ type: 'customs', name: 'Douane', country: tripData.value.PaysF })
+      
+      // Add arrival cities
+      villePF.forEach(city => {
+        route.push({ type: 'city', name: city, country: tripData.value.PaysF })
+      })
+      
+      return route
     })
 
     const completedCities = computed(() => {
       if (!tripData.value) return 0
-      const currentCity = tripData.value.current_status?.current_city
-      const currentStatus = tripData.value?.current_status?.status || tripData.value?.status
+      const currentIndex = tripData.value.current_city_index || 0
+      const currentStatus = tripData.value.status
       
-      // If trip is arrived, all cities are completed
+      // If trip is arrived, all steps are completed
       if (currentStatus === 'arrived') return allCities.value.length
       
-      if (!currentCity) return 0
-      if (currentCity === 'On Boat') return tripData.value.villePD?.length || 0
-      
-      const idx = allCities.value.indexOf(currentCity)
-      return idx + 1
+      return currentIndex
     })
 
     const remainingCities = computed(() => {

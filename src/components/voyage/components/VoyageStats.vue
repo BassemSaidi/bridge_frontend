@@ -1,27 +1,40 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-    <!-- Completed Trips Card -->
-    <div class="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-2xl p-6 shadow-lg shadow-slate-100/50 hover:shadow-xl transition-all duration-300">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    <!-- Upcoming Trips Card -->
+    <div class="bg-gradient-to-br from-amber-50 to-orange-100 border border-amber-200 rounded-2xl p-6 shadow-lg shadow-amber-100/50 hover:shadow-xl transition-all duration-300">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-slate-600 text-sm font-semibold uppercase tracking-wider">{{ t('completed') }}</p>
-          <p class="text-3xl font-black text-slate-900 mt-1">{{ completedCount }}</p>
+          <p class="text-amber-600 text-sm font-semibold uppercase tracking-wider">{{ t('upcoming') }}</p>
+          <p class="text-3xl font-black text-amber-900 mt-1">{{ upcomingCount }}</p>
         </div>
-        <div class="h-12 w-12 bg-slate-600 rounded-xl flex items-center justify-center shadow-lg shadow-slate-200">
-          <CheckCircle :size="24" class="text-white" />
+        <div class="h-12 w-12 bg-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
+          <Clock :size="24" class="text-white" />
         </div>
       </div>
     </div>
     
-    <!-- Active Trips Card -->
+    <!-- In Progress Trips Card -->
     <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6 shadow-lg shadow-blue-100/50 hover:shadow-xl transition-all duration-300">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-blue-600 text-sm font-semibold uppercase tracking-wider">{{ t('inProgress') }}</p>
-          <p class="text-3xl font-black text-blue-900 mt-1">{{ activeCount }}</p>
+          <p class="text-3xl font-black text-blue-900 mt-1">{{ inProgressCount }}</p>
         </div>
         <div class="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-          <Clock :size="24" class="text-white" />
+          <Navigation :size="24" class="text-white" />
+        </div>
+      </div>
+    </div>
+    
+    <!-- Completed Trips Card -->
+    <div class="bg-gradient-to-br from-emerald-50 to-green-100 border border-emerald-200 rounded-2xl p-6 shadow-lg shadow-emerald-100/50 hover:shadow-xl transition-all duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-emerald-600 text-sm font-semibold uppercase tracking-wider">{{ t('completed') }}</p>
+          <p class="text-3xl font-black text-emerald-900 mt-1">{{ completedCount }}</p>
+        </div>
+        <div class="h-12 w-12 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
+          <CheckCircle :size="24" class="text-white" />
         </div>
       </div>
     </div>
@@ -42,17 +55,21 @@
 </template>
 
 <script>
-import { CheckCircle, Clock, Truck } from 'lucide-vue-next'
+import { CheckCircle, Clock, Truck, Navigation } from 'lucide-vue-next'
 
 export default {
   name: 'VoyageStats',
-  components: { CheckCircle, Clock, Truck },
+  components: { CheckCircle, Clock, Truck, Navigation },
   props: {
     completedCount: {
       type: Number,
       default: 0
     },
-    activeCount: {
+    inProgressCount: {
+      type: Number,
+      default: 0
+    },
+    upcomingCount: {
       type: Number,
       default: 0
     },

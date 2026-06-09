@@ -13,6 +13,26 @@
       :currentLang="currentLang" 
     />
     
+    <!-- Upcoming Trips Section - Prominent Position -->
+    <div class="max-w-7xl mx-auto px-6 py-16">
+      <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-8 md:p-12 text-center text-white shadow-xl">
+        <div class="flex items-center justify-center mb-6">
+          <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
+            <Package :size="32" class="text-white" />
+          </div>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ t('upcomingTrips.title') }}</h2>
+        <p class="text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto">{{ t('upcomingTrips.description') }}</p>
+        <button 
+          @click="goToUpcomingTrips"
+          class="bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-indigo-50 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
+        >
+          {{ t('upcomingTrips.button') }}
+          <ArrowRight :size="20" />
+        </button>
+      </div>
+    </div>
+    
     <!-- Tracking Section -->
     <LandingTrackComponent 
       :currentLang="currentLang" 
@@ -95,6 +115,11 @@ export default {
           question: 'Ready to professionalize your transport service?',
           cta: 'Register as Transporter',
           rights: 'All rights reserved.'
+        },
+        upcomingTrips: {
+          title: 'View Upcoming Trips',
+          description: 'See all upcoming trips from our transporters and track your packages',
+          button: 'View All Trips'
         }
       },
       fr: {
@@ -127,6 +152,11 @@ export default {
           question: 'Prêt à professionnaliser votre service de transport ?',
           cta: 'S\'inscrire comme Transporteur',
           rights: 'Tous droits réservés.'
+        },
+        upcomingTrips: {
+          title: 'Voir les Voyages à Venir',
+          description: 'Voir tous les voyages à venir de nos transporteurs et suivre vos colis',
+          button: 'Voir Tous les Voyages'
         }
       }
     }
@@ -164,6 +194,10 @@ export default {
       }
     }
 
+    const goToUpcomingTrips = () => {
+      router.push('/upcoming-trips')
+    }
+
     const trackingSteps = ref([
       { label: 'Received at Warehouse', done: true },
       { label: 'In Transit', done: true },
@@ -179,6 +213,7 @@ export default {
       toggleLanguage,
       handleLanguageChange,
       trackTrip,
+      goToUpcomingTrips,
       isLoggedIn,
       checkLoginStatus
     }

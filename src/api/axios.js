@@ -81,7 +81,9 @@ export const endpoints = {
     create: '/voyages',
     update: (id) => `/voyages/${id}`,
     delete: (id) => `/voyages/${id}`,
-    getByAccountId: (accountId) => `/voyages/account/${accountId}`
+    getByAccountId: (accountId) => `/voyages/account/${accountId}`,
+    start: (id) => `/voyages/${id}/start`,
+    advance: (id) => `/voyages/${id}/advance`
   },
   
   // Colis/Packages endpoints
@@ -92,7 +94,18 @@ export const endpoints = {
     update: (id) => `/colis/${id}`,
     delete: (id) => `/colis/${id}`,
     updatePayment: (id) => `/colis/${id}/payment`,
-    getStats: '/colis/stats'
+    getStats: '/colis/stats',
+    acceptRequest: (id) => `/colis/${id}/accept`,
+    refuseRequest: (id) => `/colis/${id}/refuse`,
+    getPendingCount: '/colis/pending-count',
+    getPendingRequests: '/colis/pending-requests'
+  },
+  
+  // Public endpoints
+  public: {
+    getAccount: (id) => `/public/account/${id}`,
+    getTrips: (accountId) => `/public/trips/${accountId}`,
+    getUpcomingTrips: '/public/upcoming-trips'
   }
 }
 
@@ -129,7 +142,9 @@ export const apiService = {
     create: (voyageData) => api.post(endpoints.voyages.create, voyageData),
     update: (id, voyageData) => api.put(endpoints.voyages.update(id), voyageData),
     delete: (id) => api.delete(endpoints.voyages.delete(id)),
-    getByAccountId: (accountId) => api.get(endpoints.voyages.getByAccountId(accountId))
+    getByAccountId: (accountId) => api.get(endpoints.voyages.getByAccountId(accountId)),
+    start: (id) => api.post(endpoints.voyages.start(id)),
+    advance: (id) => api.post(endpoints.voyages.advance(id))
   },
   
   // Colis methods
@@ -140,7 +155,18 @@ export const apiService = {
     update: (id, colisData) => api.put(endpoints.colis.update(id), colisData),
     delete: (id) => api.delete(endpoints.colis.delete(id)),
     updatePayment: (id, paymentData) => api.patch(endpoints.colis.updatePayment(id), paymentData),
-    getStats: (params = {}) => api.get(endpoints.colis.getStats, { params })
+    getStats: (params = {}) => api.get(endpoints.colis.getStats, { params }),
+    acceptRequest: (id) => api.patch(endpoints.colis.acceptRequest(id)),
+    refuseRequest: (id) => api.patch(endpoints.colis.refuseRequest(id)),
+    getPendingCount: () => api.get(endpoints.colis.getPendingCount),
+    getPendingRequests: () => api.get(endpoints.colis.getPendingRequests)
+  },
+  
+  // Public methods
+  public: {
+    getAccount: (id) => api.get(endpoints.public.getAccount(id)),
+    getTrips: (accountId) => api.get(endpoints.public.getTrips(accountId)),
+    getUpcomingTrips: () => api.get(endpoints.public.getUpcomingTrips)
   }
 }
 
