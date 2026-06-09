@@ -13,94 +13,93 @@
       </div>
 
       <div v-else-if="profile" class="space-y-8">
-        
-<section class="bg-slate-950 rounded-[3rem] p-8 md:p-14 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/10">
-  <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-  
-  <div class="relative z-10 flex flex-col lg:flex-row items-center lg:items-start gap-12">
-    <div class="relative shrink-0 group">
-      <div class="absolute inset-0 bg-indigo-500 rounded-[2.8rem] blur-2xl opacity-10 group-hover:opacity-30 transition-opacity"></div>
-      <img :src="profile.img || `https://ui-avatars.com/api/?name=${profile.nom}&background=4f46e5&color=fff&size=256`" 
-           class="w-48 h-48 rounded-[2.8rem] object-cover border-[6px] border-slate-900 shadow-2xl relative z-10" />
-      <div class="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-3.5 rounded-2xl shadow-2xl border-4 border-slate-950 z-20">
-        <ShieldCheck :size="22" />
-      </div>
-    </div>
 
-    <div class="flex-1 text-center lg:text-left">
-      <div class="mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-white/5 mb-4">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-300">{{ t('verifiedTransporter') }}</span>
-        </div>
-        <h1 class="text-6xl md:text-6xl font-black tracking-tighter mb-2 uppercase leading-none">{{ profile.nom }}</h1>
-      </div>
+        <section class="bg-slate-950 rounded-[3rem] p-8 md:p-14 text-white relative overflow-hidden shadow-2xl shadow-indigo-500/10">
+          <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div class="max-w-2xl mb-12">
-        <p class="text-xl md:text-xl text-slate-400 leading-snug font-medium italic opacity-90">
-          "{{ profile.bio || t('defaultBio') }}"
-        </p>
-      </div>
-
-      <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 items-stretch">
-        
-        <div class="xl:col-span-2 grid grid-cols-2 gap-4">
-          <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
-            <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">{{ t('ratePerKg') }}</p>
-            <p class="text-3xl font-black text-white leading-none">{{ profile.priceperkg }}<span class="text-sm ml-1 text-indigo-400">€</span></p>
-          </div>
-          
-          <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
-            <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">{{ t('fleetType') }}</p>
-            <p class="text-lg font-black text-white truncate leading-none uppercase tracking-tighter">{{ profile.voiture || 'Premium' }}</p>
-          </div>
-        </div>
-
-        <div class="xl:col-span-3 bg-white/5 border border-white/10 rounded-[2.5rem] p-2 flex flex-col sm:flex-row gap-2 backdrop-blur-xl">
-
-          <button @click="callPrimary(profile.tel1)"
-                  class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-indigo-600 hover:bg-indigo-500 transition-all group overflow-hidden">
-            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-              <Phone :size="20" class="text-white group-hover:rotate-12 transition-transform" />
+          <div class="relative z-10 flex flex-col lg:flex-row items-center lg:items-start gap-12">
+            <div class="relative shrink-0 group">
+              <div class="absolute inset-0 bg-indigo-500 rounded-[2.8rem] blur-2xl opacity-10 group-hover:opacity-30 transition-opacity"></div>
+              <img :src="profile.img || `https://ui-avatars.com/api/?name=${profile.nom}&background=4f46e5&color=fff&size=256`"
+                   class="w-48 h-48 rounded-[2.8rem] object-cover border-[6px] border-slate-900 shadow-2xl relative z-10" />
+              <div class="absolute -bottom-2 -right-2 bg-emerald-500 text-white p-3.5 rounded-2xl shadow-2xl border-4 border-slate-950 z-20">
+                <ShieldCheck :size="22" />
+              </div>
             </div>
-            <div class="text-left min-w-0">
-              <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest mb-0.5">Voice Line</p>
-              <p class="text-lg font-black text-white truncate">{{ profile.tel1 }}</p>
-            </div>
-          </button>
 
-          <button @click="openWhatsApp(profile.tel2w || profile.tel1)"
-                  class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-all group">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-              <MessageCircle :size="20" class="text-emerald-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <div class="text-left min-w-0">
-              <p class="text-[8px] font-black text-white/30 uppercase tracking-widest mb-0.5">WhatsApp</p>
-              <p class="text-lg font-black text-white truncate">{{ profile.tel2w || profile.tel1 }}</p>
-            </div>
-          </button>
+            <div class="flex-1 text-center lg:text-left">
+              <div class="mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-white/5 mb-4">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span class="text-[9px] font-black uppercase tracking-[0.2em] text-indigo-300">{{ t('verifiedTransporter') }}</span>
+                </div>
+                <h1 class="text-6xl md:text-6xl font-black tracking-tighter mb-2 uppercase leading-none">{{ profile.nom }}</h1>
+              </div>
 
-        </div>
-      </div>
+              <div class="max-w-2xl mb-12">
+                <p class="text-xl md:text-xl text-slate-400 leading-snug font-medium italic opacity-90">
+                  "{{ profile.bio || t('defaultBio') }}"
+                </p>
+              </div>
 
-      <!-- Active Routes Section -->
-      <div v-if="profile.paystrajet && profile.paystrajet.length > 0" class="mt-8">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-8 h-8 bg-indigo-500/20 rounded-xl flex items-center justify-center">
-            <Route :size="16" class="text-indigo-400" />
+              <div class="grid grid-cols-1 xl:grid-cols-5 gap-4 items-stretch">
+
+                <div class="xl:col-span-2 grid grid-cols-2 gap-4">
+                  <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
+                    <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">{{ t('ratePerKg') }}</p>
+                    <p class="text-3xl font-black text-white leading-none">{{ profile.priceperkg }}<span class="text-sm ml-1 text-indigo-400">€</span></p>
+                  </div>
+
+                  <div class="bg-white/5 border border-white/10 p-6 rounded-[2.2rem] backdrop-blur-md flex flex-col justify-center">
+                    <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-2">{{ t('fleetType') }}</p>
+                    <p class="text-lg font-black text-white truncate leading-none uppercase tracking-tighter">{{ profile.voiture || 'Premium' }}</p>
+                  </div>
+                </div>
+
+                <div class="xl:col-span-3 bg-white/5 border border-white/10 rounded-[2.5rem] p-2 flex flex-col sm:flex-row gap-2 backdrop-blur-xl">
+
+                  <button @click="callPrimary(profile.tel1)"
+                          class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-indigo-600 hover:bg-indigo-500 transition-all group overflow-hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                      <Phone :size="20" class="text-white group-hover:rotate-12 transition-transform" />
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest mb-0.5">Voice Line</p>
+                      <p class="text-lg font-black text-white truncate">{{ profile.tel1 }}</p>
+                    </div>
+                  </button>
+
+                  <button @click="openWhatsApp(profile.tel2w || profile.tel1)"
+                          class="flex-1 flex items-center gap-4 p-4 rounded-[2rem] bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 transition-all group">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <MessageCircle :size="20" class="text-emerald-400 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div class="text-left min-w-0">
+                      <p class="text-[8px] font-black text-white/30 uppercase tracking-widest mb-0.5">WhatsApp</p>
+                      <p class="text-lg font-black text-white truncate">{{ profile.tel2w || profile.tel1 }}</p>
+                    </div>
+                  </button>
+
+                </div>
+              </div>
+
+              <!-- Active Routes Section -->
+              <div v-if="profile.paystrajet && profile.paystrajet.length > 0" class="mt-8">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-8 h-8 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                    <Route :size="16" class="text-indigo-400" />
+                  </div>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">{{ t('activeRoutes') }}</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <div v-for="(route, idx) in profile.paystrajet" :key="idx" class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm backdrop-blur-md">
+                    {{ route }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">{{ t('activeRoutes') }}</p>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          <div v-for="(route, idx) in profile.paystrajet" :key="idx" class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm backdrop-blur-md">
-            {{ route }}
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-</section>
+        </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
