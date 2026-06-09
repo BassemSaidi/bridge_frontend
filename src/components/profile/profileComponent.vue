@@ -80,7 +80,7 @@ export default {
   setup() {
     const lang = ref('en')
     const isEditing = ref(false)
-    const profile = ref({ nom: '', Tel1: '', Tel2W: '', Bio: '', voiture: '', paysTrajet: [], guide: [], interdits: [], pricePerKg: 0 })
+    const profile = ref({ nom: '', tel1: '', tel2w: '', bio: '', voiture: '', paysTrajet: [], guide: [], interdits: [], priceperkg: 0 })
 
     const translations = {
       en: { 

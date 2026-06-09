@@ -3,11 +3,11 @@
     <h3 class="text-lg font-bold mb-4 text-slate-800">{{ t('aboutTitle') }}</h3>
     <textarea 
       v-if="isEditing" 
-      v-model="profile.Bio" 
+      v-model="profile.bio" 
       rows="4" 
       class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-indigo-100 outline-none font-medium"
     ></textarea>
-    <p v-else class="text-slate-600 leading-relaxed font-medium">{{ profile.Bio || 'No biography provided.' }}</p>
+    <p v-else class="text-slate-600 leading-relaxed font-medium">{{ profile.bio || 'No biography provided.' }}</p>
     
     <div class="mt-8 pt-8 border-t border-slate-100">
       <div class="flex items-center justify-between mb-6">

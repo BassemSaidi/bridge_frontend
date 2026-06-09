@@ -6,19 +6,19 @@
         <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Tel 1</p>
         <input 
           v-if="isEditing" 
-          v-model="profile.Tel1" 
+          v-model="profile.tel1" 
           class="w-full bg-transparent font-bold text-slate-700 outline-none" 
         />
-        <p v-else class="font-bold text-slate-700">{{ profile.Tel1 || '—' }}</p>
+        <p v-else class="font-bold text-slate-700">{{ profile.tel1 || '—' }}</p>
       </div>
       <div class="p-4 bg-emerald-50/50 rounded-2xl">
         <p class="text-[10px] font-bold text-emerald-600 uppercase mb-1">WhatsApp</p>
         <input 
           v-if="isEditing" 
-          v-model="profile.Tel2W" 
+          v-model="profile.tel2w" 
           class="w-full bg-transparent font-bold text-slate-700 outline-none" 
         />
-        <p v-else class="font-bold text-slate-700">{{ profile.Tel2W || '—' }}</p>
+        <p v-else class="font-bold text-slate-700">{{ profile.tel2w || '—' }}</p>
       </div>
     </div>
     

@@ -39,10 +39,10 @@
           <div class="flex items-center justify-center gap-1">
             <input 
               v-if="isEditing" 
-              v-model="profile.pricePerKg" 
+              v-model="profile.priceperkg" 
               class="bg-slate-700 w-12 rounded text-center text-xl font-black text-emerald-400 outline-none" 
             />
-            <span v-else class="text-2xl font-black text-emerald-400">{{ profile.pricePerKg || 0 }}</span>
+            <span v-else class="text-2xl font-black text-emerald-400">{{ profile.priceperkg || 0 }}</span>
             <span class="text-emerald-400">€</span>
           </div>
           <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">{{ t('perKg') }}</p>
