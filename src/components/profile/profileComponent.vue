@@ -198,21 +198,11 @@ export default {
     
     const shareProfile = () => {
       const profileUrl = `${window.location.origin}/profil/${profile.value.id}`
-      
-      if (navigator.share) {
-        navigator.share({
-          title: `${profile.value.nom} - BridgeTN Transport Profile`,
-          text: `Check out my transport profile on BridgeTN! Contact me for shipping services.`,
-          url: profileUrl
-        }).catch(err => console.log('Error sharing:', err))
-      } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(profileUrl).then(() => {
-          alert('Profile link copied to clipboard!\n\nShare this link: ' + profileUrl)
-        }).catch(() => {
-          alert('Share this link: ' + profileUrl)
-        })
-      }
+      navigator.clipboard.writeText(profileUrl).then(() => {
+        alert('Profile link copied to clipboard!')
+      }).catch(err => {
+        console.error('Failed to copy profile link:', err)
+      })
     }
 
     onMounted(loadProfile)
