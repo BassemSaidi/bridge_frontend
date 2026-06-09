@@ -103,7 +103,7 @@
 </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-slate-100">
               <div class="flex items-center justify-between mb-12">
@@ -115,7 +115,7 @@
                   <CheckCircle :size="28" />
                 </div>
               </div>
-              
+
               <div class="prose prose-slate prose-p:text-lg prose-p:leading-relaxed">
                 <PublicProfileServices :profile="profile" :current-lang="currentLang" :t="t" />
               </div>
@@ -131,7 +131,7 @@
                 </h3>
                 <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded-md">{{ activeTrips.length }}</span>
               </div>
-              
+
               <PublicProfileTrips :active-trips="activeTrips" :current-lang="currentLang" :t="t" />
 
             </div>
@@ -201,7 +201,8 @@ export default {
         items: 'items',
         noExpeditions: 'No Expeditions',
         origin: 'Origin',
-        destination: 'Destination'
+        destination: 'Destination',
+        served: 'Served'
       },
       fr: {
         verifiedTransporter: 'Agréé & Vérifié',
@@ -229,7 +230,8 @@ export default {
         items: 'articles',
         noExpeditions: 'Aucune expédition',
         origin: 'Origine',
-        destination: 'Destination'
+        destination: 'Destination',
+        served: 'Desservi'
       }
     }
 
@@ -256,10 +258,22 @@ export default {
         if (response.data.success) {
           const profileData = response.data.data
           // Parse paystrajet from JSON string if it's a string
-          profileData.paystrajet = typeof profileData.paystrajet === 'string'
-            ? JSON.parse(profileData.paystrajet || '[]')
-            : (profileData.paystrajet || [])
+          if (typeof profileData.paystrajet === 'string' && profileData.paystrajet) {
+            try {
+              profileData.paystrajet = JSON.parse(profileData.paystrajet)
+            } catch (e) {
+              console.error('Error parsing paystrajet:', e)
+              profileData.paystrajet = []
+            }
+          } else if (!profileData.paystrajet) {
+            profileData.paystrajet = []
+          }
+          // Ensure guide and interdits are arrays
+          profileData.guide = Array.isArray(profileData.guide) ? profileData.guide : []
+          profileData.interdits = Array.isArray(profileData.interdits) ? profileData.interdits : []
           profile.value = profileData
+
+          // Fetch trips by account ID
           const tripsRes = await apiService.voyages.getByAccountId(profileId)
           if (tripsRes.data.success) activeTrips.value = tripsRes.data.data
         }
