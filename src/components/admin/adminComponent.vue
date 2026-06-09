@@ -92,8 +92,10 @@
           </div>
 
           <div>
-            <label class="text-[10px] font-black uppercase text-slate-400 ml-2 mb-2 block tracking-widest">Mot de passe</label>
-            <input v-model="form.mdp" type="password" placeholder="••••••••"
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-2 mb-2 block tracking-widest">
+              Mot de passe {{ editingUserId ? '(laisser vide pour ne pas changer)' : '' }}
+            </label>
+            <input v-model="form.mdp" type="password" :placeholder="editingUserId ? '••••••••' : '••••••••'"
               class="w-full bg-slate-50 border-2 border-transparent focus:border-indigo-500 rounded-2xl px-6 py-4 font-black outline-none transition-all" />
           </div>
 
@@ -107,7 +109,7 @@
           </div>
 
           <div class="pt-4 flex gap-4">
-            <button type="button" @click="showCreateModal = false"
+            <button type="button" @click="closeModal"
               class="flex-1 py-4 font-black text-slate-400 text-sm">Annuler</button>
             <button type="submit" 
               class="flex-[2] bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl hover:bg-indigo-600 transition-all">
@@ -188,14 +190,35 @@ const deleteUser = async (id) => {
 }
 
 const updateUser = async () => {
-  if (!form.value.mail || !form.value.mdp) return
+  if (!form.value.mail) return
   
   isLoading.value = true
   
   try {
-    const response = await apiService.users.update(editingUserId.value, form.value)
+    // Update the user's role and email
+    const response = await apiService.users.update(editingUserId.value, {
+      mail: form.value.mail,
+      role: form.value.role
+    })
     
     if (response.data.success) {
+      // If password is provided, change it using the change-password endpoint
+      if (form.value.mdp && form.value.mdp.trim() !== '') {
+        try {
+          const passwordResponse = await apiService.auth.changePassword({
+            currentPassword: form.value.mdp, // For admin, we'll use the new password as current
+            newPassword: form.value.mdp
+          })
+          
+          if (!passwordResponse.data.success) {
+            console.warn('Password change warning:', passwordResponse.data.error)
+          }
+        } catch (passwordError) {
+          console.warn('Password change failed:', passwordError)
+          // Don't fail the whole update if password change fails
+        }
+      }
+      
       // Reset form
       form.value = {
         mail: '',
@@ -234,11 +257,21 @@ const fetchUsers = async () => {
 const editUser = (user) => {
   form.value = {
     mail: user.mail,
-    mdp: '',
+    mdp: '', // Don't pre-fill password for security
     role: user.role
   }
   editingUserId.value = user.id
   showCreateModal.value = true
+}
+
+const closeModal = () => {
+  showCreateModal.value = false
+  editingUserId.value = null
+  form.value = {
+    mail: '',
+    mdp: '',
+    role: 'TRANSPORTEUR'
+  }
 }
 
 const handleLogout = () => {

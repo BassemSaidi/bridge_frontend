@@ -54,7 +54,8 @@ export const endpoints = {
   auth: {
     login: '/auth/login',
     register: '/auth/register',
-    me: '/auth/me'
+    me: '/auth/me',
+    changePassword: '/auth/change-password'
   },
   
   // Users endpoints
@@ -115,7 +116,8 @@ export const apiService = {
   auth: {
     login: (credentials) => api.post(endpoints.auth.login, credentials),
     register: (userData) => api.post(endpoints.auth.register, userData),
-    getMe: () => api.get(endpoints.auth.me)
+    getMe: () => api.get(endpoints.auth.me),
+    changePassword: (passwordData) => api.post(endpoints.auth.changePassword, passwordData)
   },
   
   // Users methods
