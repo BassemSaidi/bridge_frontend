@@ -48,25 +48,16 @@
           <p class="text-[10px] uppercase font-bold tracking-widest text-slate-400">{{ t('perKg') }}</p>
         </div>
       </div>
-
-      <!-- Share Profile Button -->
-      <button
-        @click="shareProfile"
-        class="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 transition-all"
-      >
-        <Share :size="16" />
-        <span class="text-sm font-bold">{{ t('shareProfile') }}</span>
-      </button>
     </div>
     <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 h-64 w-64 rounded-full bg-indigo-600/20 blur-3xl"></div>
   </div>
 </template>
 
 <script>
-import { Truck, Share } from 'lucide-vue-next'
+import { Truck } from 'lucide-vue-next'
 
 export default {
-  components: { Truck, Share },
+  components: { Truck },
   props: {
     profile: {
       type: Object,
@@ -79,16 +70,6 @@ export default {
     t: {
       type: Function,
       required: true
-    }
-  },
-  methods: {
-    shareProfile() {
-      const profileUrl = `${window.location.origin}/profil/${this.profile.id}`
-      navigator.clipboard.writeText(profileUrl).then(() => {
-        alert('Profile link copied to clipboard!')
-      }).catch(err => {
-        console.error('Failed to copy profile link:', err)
-      })
     }
   }
 }

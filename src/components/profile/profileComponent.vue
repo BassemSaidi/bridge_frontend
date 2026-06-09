@@ -6,12 +6,23 @@
 
     <div class="mx-auto mt-8 max-w-7xl px-6">
       <div class="space-y-8">
-        
+
+        <!-- Share Profile Button -->
+        <div class="flex justify-end">
+          <button
+            @click="shareProfile"
+            class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all font-bold"
+          >
+            <Share :size="20" />
+            <span>{{ t('shareProfile') }}</span>
+          </button>
+        </div>
+
         <!-- Profile Hero Section -->
-        <ProfileHeroComponent 
-          :profile="profile" 
-          :is-editing="isEditing" 
-          :t="t" 
+        <ProfileHeroComponent
+          :profile="profile"
+          :is-editing="isEditing"
+          :t="t"
         />
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">

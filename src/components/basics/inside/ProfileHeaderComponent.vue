@@ -131,13 +131,6 @@
                   <span>{{ currentLang === 'en' ? 'New Trip' : 'Nouveau Voyage' }}</span>
                 </router-link>
                 
-                <button 
-                  @click="shareProfile"
-                  class="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 rounded-xl w-full"
-                >
-                  <Share :size="18" />
-                  <span>{{ currentLang === 'en' ? 'Share Profile' : 'Partager Profil' }}</span>
-                </button>
                 
                 <hr class="my-2 border-slate-200" />
                 
